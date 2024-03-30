@@ -39,7 +39,7 @@ const CartTable = ({ cart }) => {
     const headers = {
         "Content-Type":"application/json"
     }
-    const response = await fetch(`http://localhost:3012/api/payment/create-checkout-session` , {
+    const response = await fetch(`https://ecommerce-app-tysz.onrender.com/api/payment/create-checkout-session` , {
         method:'POST',
         headers: headers,
         body :JSON.stringify(body)

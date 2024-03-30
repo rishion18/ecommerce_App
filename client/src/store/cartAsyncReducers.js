@@ -1,8 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
+const BACKEND_URL = 'https://ecommerce-app-tysz.onrender.com'
+
 export const ecommerceApi = createApi({
     reducerPath:'ecommerceApi',
-    baseQuery: fetchBaseQuery({baseUrl:'http://localhost:3012'}),
+    baseQuery: fetchBaseQuery({baseUrl:BACKEND_URL}),
     endpoints: (builder) => ({
         
         allcategories: builder.query({
