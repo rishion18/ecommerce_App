@@ -18,11 +18,13 @@ app.use('/api/product' , productRoute);
 app.use('/api/cart' , cartRoute);
 app.use('/api/payment' , paymentRoute);
 
+const PORT = process.env.PORT || 3012;
+
 app.use('*' , () => {
     console.log('page not find');
 })
 
-app.listen('3012' , async() => {
+app.listen(PORT , async() => {
     await connectToDB();
-    console.log(`listening at http://localhost:3012`);
+    console.log(`listening at ${PORT}`);
 })

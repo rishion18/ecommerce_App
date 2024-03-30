@@ -1,0 +1,29 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "public/**/*", "use": "@vercel/static" },
+      { "src": "src/api/**/*.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      {
+        "src": "/api/contents/(?<id>[^/]+)",
+        "dest": "/api/contents/[id].js?id=$id",
+        "methods": ["GET", "OPTIONS"],
+        "headers": {
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type"
+        }
+      },
+      {
+        "src": "/api/(.*)",
+        "dest": "/api/$1",
+        "methods": ["GET", "OPTIONS"],
+        "headers": {
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type"
+        }
+      },
+      { "src": "/(.*)", "dest": "/$1" }
+    ]
+  }
+  
