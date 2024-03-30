@@ -46,6 +46,17 @@ export const ecommerceApi = createApi({
                 method: 'POST',
                 body
             })
+         }),
+
+         updateCartCount: builder.mutation({
+            query:({token , body}) => ({
+                url:'api/cart/updateCartCount',
+                headers:{
+                    authorization: `Bearer ${token}`
+                },
+                method: 'PUT',
+                body
+            })
          })
     })
 }) 
@@ -55,6 +66,7 @@ export const {
               useUserLoginMutation, 
               useFetchUserQuery,
               useFetchCartQuery,
-              useAddToCartMutation
-
+              useAddToCartMutation,
+              useUpdateCartCountMutation
+              
               } = ecommerceApi

@@ -10,7 +10,7 @@ const FilterNavBar = ({setNav , navBar}) => {
     }
 
     return(
-        <div className={` w-3/4 h-screen absolute top-0 z-20 bg-slate-200 transform transition ease-in duration-200  ${!navBar?'-translate-x-full':'translate-x-0'}`}>
+        <div className={` w-3/4 md:w-96 h-screen absolute top-0 z-20 bg-slate-200 transform transition ease-in duration-200  ${!navBar?'-translate-x-full':'translate-x-0'}`}>
            <div className="w-full h-full relative">
               <div onClick={closeNav} className="absolute right-0 flex justify-center items-center w-8 h-8 border border-solid border-black cursor-pointer">
                  <IoMdClose className="w-6 h-6"/>

@@ -29,14 +29,16 @@ const Carousel = ({navBar}) => {
   })
 
   return (
-    <div className={`aspect-video relative m-4 rounded-xl overflow-hidden ${navBar?'opacity-25':''}`}>
-      <div className="w-full h-full flex transition ease-out duration-200" style={{ transform: `translateX(-${(active-1) * 100}%)` }}>
-        {arr.map((item, idx) => (
-          <img key={idx} src={arr[idx]} alt="img" className="object-cover w-full h-full rounded-xl" />
-        ))}
+    <div className="w-full flex justify-center">
+      <div className={`w-[359px] md:w-[720px] lg:w-[1080px] h-[201px] md:h-[402px] lg:h-[603px] relative m-4 rounded-xl overflow-hidden ${navBar?'opacity-25':''}`}>
+        <div className="w-full h-full flex transition ease-out duration-200" style={{ transform: `translateX(-${(active-1) * 100}%)` }}>
+          {arr.map((item, idx) => (
+            <img key={idx} src={arr[idx]} alt="img" className="object-cover w-full h-full rounded-xl" />
+          ))}
+        </div>
+        <FaAngleLeft onClick={handlePrev} className="absolute top-1/2 transform -translate-y-1/2 mx-2 text-white cursor-pointer w-10 h-auto" />
+        <FaAngleRight onClick={handleNext} className="absolute top-1/2 right-0 transform -translate-y-1/2 mx-2 text-white cursor-pointer w-10 h-auto" />
       </div>
-      <FaAngleLeft onClick={handlePrev} className="absolute top-1/2 transform -translate-y-1/2 mx-2 text-white cursor-pointer w-10 h-auto" />
-      <FaAngleRight onClick={handleNext} className="absolute top-1/2 right-0 transform -translate-y-1/2 mx-2 text-white cursor-pointer w-10 h-auto" />
     </div>
   );
 };

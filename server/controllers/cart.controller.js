@@ -42,3 +42,44 @@ export const fetchCartDetails = async(req , res) => {
         res.status(500).send({error: 'error fetching cart items'})
     }
 }
+
+
+export const updateCartCount = async (req, res) => {
+    const { p_id, actionType } = req.body;
+    const { _id } = req.user;
+
+    try {
+        const user = await User.findById(_id);
+        console.log(user)
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const productIndex = user.cart.findIndex(product => product.productId.equals(p_id));
+
+        if (productIndex === -1) {
+            return res.status(404).json({ error: 'Product not found in cart' });
+        }
+
+        if (actionType === 'increment') {
+            user.cart[productIndex].productCount++;
+        } else if (actionType === 'decrement') {
+            if (user.cart[productIndex].productCount > 0) {
+                user.cart[productIndex].productCount--;
+            }
+        } else if (actionType === 'delete') {
+            user.cart.splice(productIndex, 1);
+        } else {
+            return res.status(400).json({ error: 'Invalid action type' });
+        }
+        
+
+        await user.save();
+
+        res.status(200).json({ message: 'Cart updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

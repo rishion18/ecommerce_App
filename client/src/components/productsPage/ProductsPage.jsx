@@ -39,8 +39,8 @@ useEffect(() => {
 const{renderList} = useSelector(state => state.products);
 
     return (
-        <div className="w-full h-full">
-            <div className="grid grid-cols-2 overflow-x-hidden overflow-y-hidden">
+        <div className="w-full h-auto flex justify-center overflow-x-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 overflow-x-hidden overflow-y-hidden">
                 {
                     renderList?.map(item => <ProductCard item={item}/>)
                 }

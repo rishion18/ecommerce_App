@@ -10,8 +10,8 @@ const LandingPageCard = ({name , description}) => {
 
     return(
         <div className="w-full flex justify-center my-3 cursor-pointer" value={name} onClick={handleSelection}>
-            <div className="bg-white w-44 h-48 rounded-xl shadow-xl relative">
-               <p className="absolute top-5 left-2">{name}</p>
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 w-40 md:w-44 h-48 flex justify-center items-center rounded-xl shadow-xl relative">
+               <p className="text-white">{name}</p>
             </div>
         </div>
     )

@@ -16,9 +16,9 @@ const CartPage = () => {
 
     const token = localStorage.getItem('accessToken')
 
-    const {data: cartItems , isLoading} = useFetchCartQuery({token , body});
+    const {data: cartItems , isLoading, refetch} = useFetchCartQuery({token , body});
 
-    console.log(cartItems);
+    const{cartUpdationFlag} = useSelector(state => state.products)
 
     const dispatch = useDispatch();
 
@@ -33,6 +33,14 @@ const CartPage = () => {
     useEffect(() => {
         fetchCartItemsSideEffects()
     } , [cartItems])
+
+    useEffect(() => {
+       refetch()
+    } , [cartUpdationFlag])
+
+
+
+
 
 
     if(isLoading){

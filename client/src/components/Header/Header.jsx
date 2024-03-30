@@ -25,8 +25,9 @@ const Header = ({navBar , setNav}) => {
   const{userLoggedIn , itemsInCart} = useSelector(state => state.products);
 
   const accessToken = localStorage.getItem('accessToken');
-  const { data: userData, isLoading, isError, error } = useFetchUserQuery(accessToken);
+  const { data: userData, isLoading, isError, error , refetch} = useFetchUserQuery(accessToken);
 
+  const{cartUpdationFlag} = useSelector(state => state.products)
 
 useEffect(() => {
 if(userData){
@@ -44,19 +45,23 @@ useEffect(() => {
   }
 } , [userLoggedIn])
 
-const openNav = () => {
-  setNav(true)
-}
+useEffect(() => {
+  refetch()
+} , [cartUpdationFlag])
+
+  function openNav() {
+    setNav(true);
+  }
 
     return(
-      <div className='flex flex-col top-0 sticky z-10'>
-          <div className={`w-full flex h-16 items-center justify-between bg-slate-200 ${navBar?'opacity-20':''}`}>
+      <div className={`flex flex-col top-0 sticky z-10 ${navBar?'opacity-20':''}`} >
+          <div className={`w-full flex h-16 items-center justify-between bg-slate-200`}>
             <div className='w-[100px] mx-3 flex justify-center items-center'>
               <FaBars onClick={openNav} className='w-6 h-6 cursor-pointer text-blue-600 hover:text-blue-900'/>
             </div>
             <div className='rounded-xl bg-white flex gap-2 items-center'>
                 <CiSearch className=' text-gray-600 m-2 w-5 h-5'/>
-                <input type="text" className="rounded-xl h-9 w-[270px] border-none" placeholder="search anything here ..."/>
+                <input type="text" className="rounded-xl h-9 md:w-[500px] border-none" placeholder="search anything here ..."/>
             </div>
             <div className="mx-3 w-[100px] flex justify-center items-center">
               <FaCog className='w-6 h-6 cursor-pointer text-blue-600 hover:text-blue-900'/>
