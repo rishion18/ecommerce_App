@@ -15,7 +15,7 @@ const[navBar , setNav] = useState(false);
 const {category} = useParams();
 
 const fetchProducts = () => {
-    fetch(`http://localhost:3012/api/product/${category}`)
+    fetch(`https://ecommerce-app-tysz.onrender.com/api/product/${category}`)
     .then(res => {
         if (!res.ok) {
             throw new Error('Failed to fetch data');
