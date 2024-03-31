@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { MdAccessAlarm, MdOutlineCurrencyRupee } from "react-icons/md";
+import { useLocation, useParams } from "react-router-dom";
+import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import LoginForm from "../authPages/loginForm";
 import { useDispatch } from "react-redux";
-import { setCartAddAlert } from "../../store/productReducers";
 import { useAddToCartMutation } from "../../store/cartAsyncReducers";
 
 
@@ -22,7 +21,7 @@ const ProductDetailPage = () => {
 
 
     const fetchProduct = () => {
-        fetch(`http://localhost:3012/api/product/${category}/${p_id}`)
+        fetch(`https://ecommerce-app-tysz.onrender.com/api/product/${category}/${p_id}`)
             .then((res) => res.json())
             .then((data) => {
                 setProduct(data)
@@ -36,8 +35,8 @@ const ProductDetailPage = () => {
 
     const body = {
         selectedProductId: p_id ,
-        selectedProductName:product.title,
-        selectedProductPrice:newPrice
+        selectedProductName: product.title,
+        selectedProductPrice: newPrice
     }
 
     const token = localStorage.getItem('accessToken')
