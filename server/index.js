@@ -11,7 +11,12 @@ config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+    origin: 'https://ecommerce-app-psi-roan.vercel.app/', 
+};
+
+app.use(cors(corsOptions));
 
 app.use('/api/user' , userRoute);
 app.use('/api/product' , productRoute);
