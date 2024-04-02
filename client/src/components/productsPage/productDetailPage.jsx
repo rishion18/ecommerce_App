@@ -4,7 +4,7 @@ import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import LoginForm from "../authPages/loginForm";
 import { useDispatch } from "react-redux";
-import { useAddToCartMutation } from "../../store/cartAsyncReducers";
+import { useAddToCartMutation, useFetchCartQuery, useFetchProductQuery } from "../../store/cartAsyncReducers";
 
 
 const ProductDetailPage = () => {
@@ -13,35 +13,22 @@ const ProductDetailPage = () => {
     const p_id = searchParams.get("p_id");
     const { category } = useParams();
 
-    const [product, setProduct] = useState({});
     const [active, setActive] = useState(0);
-    const[newPrice , setNewPrice] = useState(0);
-    const[loginActive , setLoginActive] = useState(false);
+    const [loginActive, setLoginActive] = useState(false);
     const dispatch = useDispatch()
 
+    const { data: product, isLoading: productLoading, isError: productError } = useFetchProductQuery({ category, p_id });
+    const { data: cart, isLoading: cartLoading, isError: cartError } = useFetchCartQuery();
 
-    const fetchProduct = () => {
-        fetch(`https://ecommerce-app-tysz.onrender.com/api/product/${category}/${p_id}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setProduct(data)
-                setNewPrice((prev) => {
-                    return data.price - (data.discount / 100) * data.price
-                })
-            })
-            .catch((error) => console.error("Error fetching product:", error));
-    };
-
-
+    const[newPrice, setNewPrice] = useState(0);
     const body = {
-        selectedProductId: p_id ,
-        selectedProductName: product.title,
+        selectedProductId: p_id,
+        selectedProductName: product?.title || "",
         selectedProductPrice: newPrice
     }
 
     const token = localStorage.getItem('accessToken')
-
-    const [add, { isLoading, isError }] = useAddToCartMutation();
+    const [add, { isLoading: addToCartLoading, isError: addToCartError }] = useAddToCartMutation();
 
     const handleAddToCart = async () => {
         try {
@@ -58,13 +45,13 @@ const ProductDetailPage = () => {
             alert('Error adding item to cart. Please try again later.');
         }
     };
-    
-    
-
 
     useEffect(() => {
-        fetchProduct();
-    }, [p_id]);
+        if (!product) return; 
+        setNewPrice((prev) => {
+            return product.price - (product.discount / 100) * product.price
+        });
+    }, [product]);
 
     console.log(product);
 

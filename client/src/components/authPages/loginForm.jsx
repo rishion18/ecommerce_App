@@ -29,7 +29,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();  
     if (!isLoading && !isError) {
       try {
-        const response = await login(loginBody);
+        const response = await login({body:loginBody});
   
         if (response.data) {
           localStorage.setItem('accessToken', response.data.accessToken);

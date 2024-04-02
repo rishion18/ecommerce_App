@@ -1,52 +1,34 @@
 import { useParams } from "react-router-dom";
 import { setOperationList, setRenderList } from "../../store/productReducers";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import Header from "../Header/Header";
-import FilterNavBar from "../filterNavBar/filterNavBar";
+import { useEffect } from "react";
 import ProductCard from "./productCard";
+import { useFetchAllProductsQuery } from "../../store/cartAsyncReducers";
 
 const ProductsPage = () => {
+    const dispatch = useDispatch();
+    const { category } = useParams();
 
-const dispatch = useDispatch();
+    const { data, isLoading, isError } = useFetchAllProductsQuery({ category });
 
-const[navBar , setNav] = useState(false);
-
-const {category} = useParams();
-
-const fetchProducts = () => {
-    fetch(`https://ecommerce-app-tysz.onrender.com/api/product/${category}`)
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Failed to fetch data');
+    useEffect(() => {
+        if (data) {
+            dispatch(setOperationList(data));
+            dispatch(setRenderList(data));
         }
-        return res.json();
-    })
-    .then(data => {
-        dispatch(setOperationList(data));
-        dispatch(setRenderList(data));
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-    });
-};
+    }, [data, dispatch]);
 
-
-useEffect(() => {
-    fetchProducts();
-} , [])
-
-const{renderList} = useSelector(state => state.products);
+    const { renderList } = useSelector((state) => state.products);
 
     return (
         <div className="w-full h-auto flex justify-center overflow-x-hidden">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 overflow-x-hidden overflow-y-hidden">
-                {
-                    renderList?.map(item => <ProductCard item={item}/>)
-                }
+                {renderList?.map((item) => (
+                    <ProductCard key={item.id} item={item} />
+                ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ProductsPage;

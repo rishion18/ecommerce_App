@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const BACKEND_URL = 'https://ecommerce-app-tysz.onrender.com'
+const BACKEND_URL_PRODUCTION = 'https://ecommerce-app-tysz.onrender.com'
+const BACKEND_URL_DEV = 'http://localhost:3012'
 
 export const ecommerceApi = createApi({
     reducerPath:'ecommerceApi',
-    baseQuery: fetchBaseQuery({baseUrl:BACKEND_URL}),
+    baseQuery: fetchBaseQuery({baseUrl:BACKEND_URL_DEV}),
     endpoints: (builder) => ({
         
         allcategories: builder.query({
@@ -12,7 +13,7 @@ export const ecommerceApi = createApi({
          }),
         
          userLogin: builder.mutation({
-            query: (body) => ({
+            query: ({body}) => ({
                 url:'/api/user/userLogin',
                 method: 'POST',
                 body,
@@ -59,6 +60,20 @@ export const ecommerceApi = createApi({
                 method: 'PUT',
                 body
             })
+         }),
+
+         fetchProduct: builder.query({
+            query:({category , p_id}) => ({
+                url:`api/product/${category}/${p_id}`,
+                method: 'GET'
+            })
+         }),
+
+         fetchAllProducts: builder.query({
+            query:({category}) => ({
+                url: `api/product/${category}`,
+                method: 'GET'
+            })
          })
     })
 }) 
@@ -69,6 +84,8 @@ export const {
               useFetchUserQuery,
               useFetchCartQuery,
               useAddToCartMutation,
-              useUpdateCartCountMutation
+              useUpdateCartCountMutation,
+              useFetchProductQuery,
+              useFetchAllProductsQuery
               
               } = ecommerceApi
