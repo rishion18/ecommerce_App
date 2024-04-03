@@ -51,8 +51,8 @@ userSchema.methods = {
             userRole: this.role,
             userName:this.username
         };
-        const accessToken = jwt.sign(payload, process.env.Jwt_secret, { expiresIn: '2d' });
-        const refreshToken = jwt.sign(payload, process.env.Jwt_secret , { expiresIn: '2d' });        
+        const accessToken = jwt.sign(payload, process.env.Jwt_secret, { expiresIn: process.env.Jwt_Access_expiry });
+        const refreshToken = jwt.sign(payload, process.env.Jwt_secret , { expiresIn: process.env.Jwt_Refresh_expiry });        
 
         return {accessToken , refreshToken};
     }
