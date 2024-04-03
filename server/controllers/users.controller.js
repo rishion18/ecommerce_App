@@ -40,7 +40,7 @@ export const userLogin = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send({ status: false, message: error });
+        return res.status(500).send({ status: false, message: error.message+'hello' });
     }
 };
 
