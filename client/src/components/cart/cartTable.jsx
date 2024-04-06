@@ -4,9 +4,13 @@ import { useUpdateCartCountMutation } from "../../store/cartAsyncReducers";
 import { useDispatch } from "react-redux";
 import { setCartUpdationFlag } from "../../store/productReducers";
 import {loadStripe} from '@stripe/stripe-js';
+import RenderRazorpay from "../razorpay/RenderRazorpay.jsx";
 
 
 const CartTable = ({ cart }) => {
+
+const [displayRazorpay, setDisplayRazorpay] = useState(false);
+const [orderDetails, setOrderDetails] = useState(null);
 
   const dispatch = useDispatch()
   const [updateCount, { isLoading, isError }] = useUpdateCartCountMutation();
@@ -55,6 +59,39 @@ const CartTable = ({ cart }) => {
         console.log(result.error);
     }
 }
+
+
+
+ const makeRazorPayPayment = async() => {
+   try{
+      fetch(`http://localhost:3012/api/razorPay/razorPayOrder` , {
+        method: 'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: totalPrice
+        })
+      })
+      .then(res => res.json())
+      .then(orderData => {
+        setOrderDetails({
+           orderId: orderData.order_id,
+           currency: orderData.currency,
+           amount: orderData.amount,
+         });
+         setDisplayRazorpay(true);
+      })
+    }
+   catch(error){
+    console.log(error.message)
+   }
+}
+
+useEffect(() => {
+  console.log(displayRazorpay)
+console.log(orderDetails)
+} , [orderDetails , displayRazorpay])
 
 
   return (
@@ -112,12 +149,21 @@ const CartTable = ({ cart }) => {
             <p className="mr-1">Your total is -</p>
             <MdOutlineCurrencyRupee />
             <p>{total}</p>
-            <button onClick={makePayment} className="text-sm px-2 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white ml-4">
+            <button onClick={makeRazorPayPayment} className="text-sm px-2 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white ml-4">
               Continue to Pay
             </button>
           </div>
         </div>
       </div>
+      {
+        displayRazorpay && (
+      <RenderRazorpay
+        amount={orderDetails.amount}
+        currency={orderDetails.currency}
+        orderId={orderDetails.orderId}
+      />
+        )
+      }
     </div>
   );
 };

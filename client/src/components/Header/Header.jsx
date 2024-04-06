@@ -8,6 +8,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useFetchUserQuery } from '../../store/cartAsyncReducers';
 import { setCartAddAlert, setUserLoggedIn } from '../../store/productReducers';
+import {useNavigate} from 'react-router-dom'
 
 
 
@@ -15,6 +16,8 @@ import { setCartAddAlert, setUserLoggedIn } from '../../store/productReducers';
 
 
 const Header = ({navBar , setNav}) => {
+
+  const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
@@ -28,6 +31,13 @@ const Header = ({navBar , setNav}) => {
   const { data: userData, isLoading, isError, error , refetch} = useFetchUserQuery(accessToken);
 
   const{cartUpdationFlag} = useSelector(state => state.products)
+
+  const logOut = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    setUser(null)
+    navigate('/')
+  }
 
 useEffect(() => {
 if(userData){
@@ -67,12 +77,12 @@ useEffect(() => {
               <FaCog className='w-6 h-6 cursor-pointer text-blue-600 hover:text-blue-900'/>
             </div>
           </div>
-         {user && 
-          <div className='bg-slate-300 h-10 flex items-center justify-center'>
+         
+          <div className={`bg-slate-300 h-10 flex items-center justify-center transform transition ease-in duration-300 -z-10 ${user ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className='flex w-4/5 justify-around'>
               <div className='flex gap-2'>Welcome <p className='font-semibold'>{user}</p></div>
               <div>
-                <button className='text-sm underline cursor-pointer'>Logout</button>
+                <button onClick={logOut} className='text-sm underline cursor-pointer'>Logout</button>
               </div>
               <Link to={`/cart/?u_id=${uid}`}>
                   <div className='flex items-center gap-2'>
@@ -81,7 +91,7 @@ useEffect(() => {
                   </div>
               </Link>
             </div>
-          </div>}
+          </div>
        </div>
     )
 }
