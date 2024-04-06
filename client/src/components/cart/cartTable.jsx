@@ -64,7 +64,7 @@ const [orderDetails, setOrderDetails] = useState(null);
 
  const makeRazorPayPayment = async() => {
    try{
-      fetch(`http://localhost:3012/api/razorPay/razorPayOrder` , {
+      fetch(`https://ecommerce-app-tysz.onrender.com/api/razorPay/razorPayOrder` , {
         method: 'POST',
         headers:{
           'Content-Type': 'application/json'
