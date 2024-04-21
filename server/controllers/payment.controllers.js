@@ -3,6 +3,8 @@ import Razorpay from 'razorpay'
 import payments from '../models/payments.model.js';
 import crypto from 'crypto'
 import OrderLog from '../models/orderLog.model.js';
+import { config } from 'dotenv';
+config()
 
 //************************************************* --- STRIPE PAYMENT BLOCK START --- ***********************************************************
 
@@ -79,6 +81,7 @@ export const stripeVerification = (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   let event;
+  console.log(process.env.ENDPOINT_SECRET)
 
   try {
     event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.ENDPOINT_SECRET);
