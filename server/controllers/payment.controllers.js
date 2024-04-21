@@ -27,23 +27,23 @@ try{
       paymentStatus: 'pending'
     };
 
-    const createdOrder = await OrderLog.create(orderBody)
+    // const createdOrder = await OrderLog.create(orderBody)
     
-    if(createdOrder){
-      try{
-         await stripeInstance.customers.create({
-          metadata:{
-            userId: createdOrder.userId.toString(),
-            orderId: createdOrder._id.toString()
-          }
-       })
-       console.log('customer created')
-       res.send('customer created')
-      }catch(error){
-        console.log({'error occured creating customer': error.message})
-        res.send({'error occured creating customer': error.message})
-      }
-    }
+    // if(createdOrder){
+    //   try{
+    //      await stripeInstance.customers.create({
+    //       metadata:{
+    //         userId: createdOrder.userId.toString(),
+    //         orderId: createdOrder._id.toString()
+    //       }
+    //    })
+    //    console.log('customer created')
+    //    res.send('customer created')
+    //   }catch(error){
+    //     console.log({'error occured creating customer': error.message})
+    //     res.send({'error occured creating customer': error.message})
+    //   }
+    // }
     
    const lineItems = products.map((product) => ({
     price_data:{
@@ -59,7 +59,6 @@ try{
    const session = await stripeInstance.checkout.sessions.create({
     payment_method_types:["card"],
     line_items:lineItems,
-    customer: customer.id,
     mode: "payment",
     billing_address_collection: 'required',
     success_url:"https://ecommerce-app-psi-roan.vercel.app/success",

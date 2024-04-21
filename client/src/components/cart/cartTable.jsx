@@ -51,7 +51,7 @@ const BACKEND_URL_DEV = 'http://localhost:3012'
     const headers = {
         "Content-Type":"application/json"
     }
-    const response = await fetch(`${BACKEND_URL_PRODUCTION}/api/payment/create-checkout-session` , {
+    const response = await fetch(`${BACKEND_URL_DEV}/api/payment/create-checkout-session` , {
         method:'POST',
         headers: headers,
         body :JSON.stringify(body)
