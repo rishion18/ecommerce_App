@@ -67,7 +67,6 @@ const DoubleRangeSlider = ({ onChange }) => {
           {endPrice}
        </div>
       </div>
-      <button>apply</button>
     </div>
   );
 };
