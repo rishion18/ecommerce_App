@@ -33,8 +33,8 @@ try{
       try{
          await stripeInstance.customers.create({
           metadata:{
-            userId: createdOrder.userId,
-            orderId: createdOrder._id
+            userId: createdOrder.userId.toString(),
+            orderId: createdOrder._id.toString()
           }
        })
        console.log('customer created')
