@@ -3,7 +3,6 @@ import { Schema, model } from "mongoose";
 const orderLogSchema = new Schema({
     transactionId: {
       type: String,
-      required: true,
       unique: true,
     },
     userId: {

@@ -17,16 +17,34 @@ export const stripePayment = async(req , res) => {
   initialiseInstance()
 
 try{   
-    const {products ,userName , userId} = req.body;    
+    const {products ,userName , userId} = req.body;  
     
-    const customer = await stripeInstance.customers.create({
-      metadata:{
-        userId: userId,
-        userName:userName,
-        cart: JSON.stringify(products)
-      }
-   })
+    //saving orderData in db with pending payment status 
 
+    const orderBody = {
+      userId: userId,
+      cart: products,
+      paymentStatus: 'pending'
+    };
+
+    const createdOrder = await OrderLog.create(orderBody)
+    
+    if(createdOrder){
+      try{
+         await stripeInstance.customers.create({
+          metadata:{
+            userId: createdOrder.userId,
+            orderId: createdOrder._id
+          }
+       })
+       console.log('customer created')
+       res.send('customer created')
+      }catch(error){
+        console.log({'error occured creating customer': error.message})
+        res.send({'error occured creating customer': error.message})
+      }
+    }
+    
    const lineItems = products.map((product) => ({
     price_data:{
         currency:"inr",
@@ -87,8 +105,6 @@ export const stripeVerification = (request, response) => {
   } else {
     console.log('Invalid event received:', event);
   }
-
-  // Return a 200 response to acknowledge receipt of the event
   response.send();
 };
 
@@ -99,15 +115,28 @@ async function handleCheckoutCompleted(session) {
       console.log('Customer:', customer);
       
       // Parse the cart data from JSON string to an array of objects
-      const cartData = JSON.parse(customer.metadata.cart);
-
+      const orderId = customer.metadata.orderId
       // Construct the order body using the parsed cart data
-      const orderBody = {
-        transactionId: session.id,
-        userId: customer.metadata.userId,
-        cart: cartData,
-        paymentStatus: session.payment_status
-      };
+      if (orderId) {
+        try {
+          const order = await OrderLog.findOne({ orderId: orderId });
+      
+          if (order) {
+            order.paymentStatus = session.payment_status;
+            order.transactionId = session.id;
+
+            await order.save()
+            console.log('Order updated successfully:', order);
+
+          } else {
+            console.log('Order not found');
+          }
+        } catch (error) {
+          // Handle errors that occur during database query
+          console.error('Error occurred while updating OrderLog:', error.message);
+        }
+      }
+      
 
       const createdOrder = await OrderLog.create(orderBody);
       if (createdOrder) {
