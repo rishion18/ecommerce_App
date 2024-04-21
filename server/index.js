@@ -6,10 +6,14 @@ import productRoute from './routes/product.route.js'
 import cartRoute from './routes/cart.route.js'
 import paymentRoute from './routes/payment.route.js'
 import razorPayRoute from './routes/razorPay.route.js'
+import sortedBy from './routes/sorting.routes.js'
 import cors from 'cors';
+import { stripeVerification } from './controllers/payment.controllers.js';
 config();
 
 const app = express();
+
+app.post('/webhook', express.raw({type: 'application/json'}) , stripeVerification)
 
 app.use(express.json());
 
@@ -21,6 +25,7 @@ app.use('/api/product' , productRoute);
 app.use('/api/cart' , cartRoute);
 app.use('/api/payment' , paymentRoute);
 app.use('/api/razorPay' , razorPayRoute)
+app.use('/api/sortedBy' , sortedBy)
 
 const PORT = process.env.PORT || 3012;
 

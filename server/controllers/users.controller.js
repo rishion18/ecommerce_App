@@ -1,6 +1,8 @@
 import User from "../models/users.model.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import OrderLog from "../models/orderLog.model.js";
+import mongoose from 'mongoose'
 
 export const userRegister = async (req, res) => {
 
@@ -89,7 +91,7 @@ export const fetchUser = async (req, res) => {
 
         const itemCount = item.cart.reduce((acc, item) => acc+=item.productCount , 0)
 
-        res.status(200).send({ userName: userName , userId:userId, itemCount:itemCount });
+        res.status(200).send({ userName: userName , userId:userId, itemCount:itemCount , userEmail:item.email });
 
     } catch (error) {
         console.error('Error:', error);
@@ -97,5 +99,31 @@ export const fetchUser = async (req, res) => {
     }
 };
 
+// api to fetch all orders associated with one user
 
+export const getAllOrdersForUser = async (req, res) => {
+    try {
+      const { userId } = req.body;
+  
+      const orders = await OrderLog.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        { $unwind: "$cart" },
+        {
+          $group: {
+            _id: "$cart.productId",
+            productName: { $first: "$cart.productName" },
+            productCount: { $sum: "$cart.productCount" },
+            productPrice: { $first: "$cart.productPrice" }
+          }
+        }
+      ]);
+  
+      res.send(orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).send("Error fetching orders");
+    }
+  };
+  
+  
 

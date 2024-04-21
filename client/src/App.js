@@ -4,6 +4,8 @@ import ProductsPage from "./components/productsPage/ProductsPage";
 import ProductDetailPage from "./components/productsPage/productDetailPage";
 import NavBarLayout from "./components/layouts/NavBarLayout";
 import CartPage from "./components/cart/cartPage";
+import Success from "./components/successFailurePages/success";
+import ProductsBySubCategory from "./components/productsPage/productsBySub";
 
 function App() {
 
@@ -23,6 +25,13 @@ const router = createBrowserRouter([
   {
      path:'/cart',
      element:<NavBarLayout><CartPage/></NavBarLayout>
+  },{
+    path:'/success',
+    element:<NavBarLayout><Success/></NavBarLayout>
+  },
+  {
+    path:'/filter/:subCategory',
+    element: <NavBarLayout><ProductsBySubCategory/></NavBarLayout>
   }
 ])
 

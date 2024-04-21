@@ -74,6 +74,13 @@ export const ecommerceApi = createApi({
                 url: `api/product/${category}`,
                 method: 'GET'
             })
+         }),
+
+         sortProductsBySubcategory: builder.query({
+            query:({subCategory}) => ({
+                url: `api/sortedBy/${subCategory}`,
+                method: 'GET',
+            })
          })
     })
 }) 
@@ -86,6 +93,7 @@ export const {
               useAddToCartMutation,
               useUpdateCartCountMutation,
               useFetchProductQuery,
-              useFetchAllProductsQuery
-              
+              useFetchAllProductsQuery,
+              useSortProductsBySubcategoryQuery,
+            
               } = ecommerceApi

@@ -18,12 +18,6 @@ router.post('/createProduct' , createProduct);
 
 router.get(`/:category` , productsByCategory);
 
-router.get('/?category=categoryName&subcategory=subcategoryName' , productsByCategoryAndSubcategory);
-
-router.get('/:productId' , getProduct);
-
-
-
 
 
 export default router;

@@ -1,4 +1,5 @@
 import products from "../models/products.model.js";
+import crypto from 'crypto'
 
 export const createProduct = async(req , res) => {
     try{
@@ -23,10 +24,12 @@ export const productsByCategory = async(req , res) => {
 }
 
 export const productsByCategoryAndSubcategory = async (req, res) => {
-    const { category, subCategory } = req.query;
+    console.log('arrived here')
+    console.log(req.params)
+    const { subCategory } = req.params;
 
     try {
-        const filtered = await products.find({ category, subCategory });
+        const filtered = await products.find({ subCategory });
         res.status(200).send(filtered);
     } catch (err) {
         console.error(err);
@@ -49,8 +52,6 @@ export const fetchCategoriesAndSubCategories = async (req, res) => {
                 categoriesAndSubCategories[category].push(subCategory);
              }
          });
-
-         console.log(categoriesAndSubCategories);
 
         const formattedData = Object.keys(categoriesAndSubCategories).map(category => ({
              categoryName: category,

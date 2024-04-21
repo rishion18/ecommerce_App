@@ -1,6 +1,8 @@
 import { useRef , useEffect } from 'react';
-
+import{useSelector} from 'react-redux'
 // Function to load script and append in DOM tree.
+
+
 const loadScript = src => new Promise((resolve) => {
   const script = document.createElement('script');
   script.src = src;
@@ -24,12 +26,21 @@ const RenderRazorpay = ({
   const paymentId = useRef(null);
   const paymentMethod = useRef(null);
 
+  const { currentUser } = useSelector((state) => state.products);
+
+
   const options = {
     key:'rzp_test_ynRcdWmb5fyIlt',
     amount, // Amount in lowest denomination from props
     currency, // Currency from props.
-    name: 'amit', // Title for your organization to display in checkout modal
+    name: `${currentUser.userName}`, 
     order_id: orderId, // order id from props
+    prefill: {
+      "name": `${currentUser.userName}`,
+      "email": `${currentUser.email}`
+  },
+    callback_url: "http://localhost:3012/api/razorPay/paymentVerification",
+    redirect: true
     
   };
 
@@ -43,15 +54,12 @@ const RenderRazorpay = ({
       console.log('Razorpay SDK failed to load. Are you online?');
       return;
     }
-    // All information is loaded in options which we will discuss later.
     const rzp1 = new window.Razorpay(options);
 
-    // If you want to retreive the chosen payment method.
     rzp1.on('payment.submit', (response) => {
       paymentMethod.current = response.method;
     });
 
-    // To get payment id in case of failed transaction.
     rzp1.on('payment.failed', (response) => {
       paymentId.current = response.error.metadata.payment_id;
     });

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useFetchUserQuery } from '../../store/cartAsyncReducers';
-import { setCartAddAlert, setUserLoggedIn } from '../../store/productReducers';
+import { setCartAddAlert, setCurrentUser, setUserLoggedIn } from '../../store/productReducers';
 import {useNavigate} from 'react-router-dom'
 
 
@@ -41,6 +41,7 @@ const Header = ({navBar , setNav}) => {
 
 useEffect(() => {
 if(userData){
+  dispatch(setCurrentUser(userData))
   setUser(userData.userName)
   setId(userData.userId)
   setCount(userData.itemCount)

@@ -9,7 +9,8 @@ const productReducerSlice = createSlice({
         userLoggedIn:false,
         itemsInCart:0,
         cartAddAlert:false,
-        cartUpdationFlag:false
+        cartUpdationFlag:false,
+        currentUser: {}
     },
     reducers: {
         setAllCategoriesAndSubcategories: (state, action) => {
@@ -36,6 +37,9 @@ const productReducerSlice = createSlice({
               ...state,
               cartUpdationFlag: !state.cartUpdationFlag,
             };
+          },
+          setCurrentUser:(state , action) => {
+            state.currentUser = action.payload
           }
           
     },
@@ -48,7 +52,8 @@ export const {
                setUserLoggedIn,
                setItemsInCart,
                setCartAddAlert,
-               setCartUpdationFlag
+               setCartUpdationFlag,
+               setCurrentUser
              } = productReducerSlice.actions;
 
 export default productReducerSlice.reducer;
