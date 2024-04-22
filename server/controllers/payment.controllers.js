@@ -78,13 +78,14 @@ export const stripePayment = async (req, res) => {
 
 export const stripeVerification = (request, response) => {
   console.log('Reached the webhook endpoint');
-  console.log({'stripeInstance':stripeInstance.webhooks.constructEvent})
+  console.log({'stripeInstance':stripeInstance.webhooks})
 
   const sig = request.headers['stripe-signature'];
 
   let event;
   console.log(process.env.ENDPOINT_SECRET)
   console.log({'body': request.body , 'sig': sig })
+
 
   try {
     event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.ENDPOINT_SECRET);
