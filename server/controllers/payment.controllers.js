@@ -14,74 +14,77 @@ const initialiseInstance = () => {
 
 }
 
-export const stripePayment = async(req , res) => {
+export const stripePayment = async (req, res) => {
+  initialiseInstance();
 
-  initialiseInstance()
+  try {
+    const { products, userName, userId } = req.body;
 
-try{   
-    const {products ,userName , userId} = req.body;  
-    
-    //saving orderData in db with pending payment status 
-
+    // Saving orderData in db with pending payment status
     const orderBody = {
       userId: userId,
       cart: products,
       paymentStatus: 'pending'
     };
 
-    // const createdOrder = await OrderLog.create(orderBody)
-    
-    // if(createdOrder){
-    //   try{
-    //      await stripeInstance.customers.create({
-    //       metadata:{
-    //         userId: createdOrder.userId.toString(),
-    //         orderId: createdOrder._id.toString()
-    //       }
-    //    })
-    //    console.log('customer created')
-    //    res.send('customer created')
-    //   }catch(error){
-    //     console.log({'error occured creating customer': error.message})
-    //     res.send({'error occured creating customer': error.message})
-    //   }
-    // }
-    
-   const lineItems = products.map((product) => ({
-    price_data:{
-        currency:"inr",
-        product_data:{
-            name: product.productName
-        },
-        unit_amount:parseInt(product.productPrice * 100),
-    },
-    quantity:product.productCount
-   }))
+    const createdOrder = await OrderLog.create(orderBody);
 
-   const session = await stripeInstance.checkout.sessions.create({
-    payment_method_types:["card"],
-    line_items:lineItems,
-    mode: "payment",
-    billing_address_collection: 'required',
-    success_url:"https://ecommerce-app-psi-roan.vercel.app/success",
-    cancel_url:"http://localhost:3000/failure"
-   });
-   res.json({id:session.id})
-}catch(error){
+    let customer;
+
+    if (createdOrder) {  // if order is created successfully  -> creating customer and passing orderId for future reference
+      try {
+         customer = await stripeInstance.customers.create({
+          metadata: {
+            userId: createdOrder.userId.toString(),
+            orderId: createdOrder._id.toString()
+          }
+        });
+        console.log('Customer created');
+      } catch (error) {
+        console.log({ 'Error occurred creating customer': error.message });
+      }
+    }
+
+    const lineItems = products.map((product) => ({
+      price_data: {
+        currency: 'inr',
+        product_data: {
+          name: product.productName
+        },
+        unit_amount: parseInt(product.productPrice * 100),
+      },
+      quantity: product.productCount
+    }));
+
+    const session = await stripeInstance.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      customer: customer.id,
+      billing_address_collection: 'required',
+      success_url: 'https://ecommerce-app-psi-roan.vercel.app/success',
+      cancel_url: 'http://localhost:3000/failure'
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
     console.error('Error creating Stripe Checkout session:', error);
     res.status(500).json({ error: 'Failed to create Stripe session.' });
-}
-}
+  }
+};
 
 
+// webhook listening for payment completion and updating payment status in created order
 
 export const stripeVerification = (request, response) => {
   console.log('Reached the webhook endpoint');
+  console.log({'stripeInstance':stripeInstance.webhooks.constructEvent})
 
   const sig = request.headers['stripe-signature'];
 
   let event;
   console.log(process.env.ENDPOINT_SECRET)
+  console.log({'body': request.body , 'sig': sig })
 
   try {
     event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.ENDPOINT_SECRET);
@@ -92,15 +95,13 @@ export const stripeVerification = (request, response) => {
     return;
   }
 
-  // Handle the event
   if (event && event.type) {
 
     switch (event.type) {
       case 'checkout.session.completed':
-        console.log('Checkout Session Completed');
+        console.log({'Checkout Session Completed': event.data.object});
         handleCheckoutCompleted(event.data.object);
         break;
-      // Handle other event types as needed
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
@@ -116,43 +117,36 @@ async function handleCheckoutCompleted(session) {
       const customer = await stripeInstance.customers.retrieve(session.customer);
       console.log('Customer:', customer);
       
-      // Parse the cart data from JSON string to an array of objects
-      const orderId = customer.metadata.orderId
-      // Construct the order body using the parsed cart data
+      const orderId = customer.metadata.orderId;
+
       if (orderId) {
         try {
-          const order = await OrderLog.findOne({ orderId: orderId });
+          const order = await OrderLog.findOne({_id: orderId});
       
           if (order) {
             order.paymentStatus = session.payment_status;
             order.transactionId = session.id;
 
-            await order.save()
+            await order.save();
             console.log('Order updated successfully:', order);
-
           } else {
             console.log('Order not found');
           }
         } catch (error) {
-          // Handle errors that occur during database query
           console.error('Error occurred while updating OrderLog:', error.message);
         }
-      }
-      
-
-      const createdOrder = await OrderLog.create(orderBody);
-      if (createdOrder) {
-        console.log('Order created successfully:', createdOrder);
       } else {
-        console.log('Error creating order');
+        console.log('Invalid session data');
       }
     } catch (error) {
-      console.error('Error retrieving customer details or creating order:', error);
+      console.error('Error retrieving customer details:', error.message);
     }
   } else {
     console.log('Invalid session data');
   }
 }
+
+
 //************************************************* --- STRIPE PAYMENT BLOCK END --- *************************************************************
 
 
