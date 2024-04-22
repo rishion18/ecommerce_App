@@ -5,7 +5,7 @@ const BACKEND_URL_DEV = 'http://localhost:3012'
 
 export const ecommerceApi = createApi({
     reducerPath:'ecommerceApi',
-    baseQuery: fetchBaseQuery({baseUrl: BACKEND_URL_PRODUCTION}),
+    baseQuery: fetchBaseQuery({baseUrl: BACKEND_URL_DEV}),
     endpoints: (builder) => ({
         
         allcategories: builder.query({

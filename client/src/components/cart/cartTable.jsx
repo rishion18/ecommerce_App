@@ -5,12 +5,15 @@ import { useDispatch } from "react-redux";
 import { setCartUpdationFlag } from "../../store/productReducers";
 import {loadStripe} from '@stripe/stripe-js';
 import RenderRazorpay from "../razorpay/RenderRazorpay.jsx";
+import load from '../../assets/6.gif'
+import loadingGif from '../../assets/loading.gif'
 
 
 const CartTable = ({ cart }) => {
 
 const [displayRazorpay, setDisplayRazorpay] = useState(false);
 const [orderDetails, setOrderDetails] = useState(null);
+const[loading , setLoading] = useState(false)
 
 const BACKEND_URL_PRODUCTION = 'https://ecommerce-app-tysz.onrender.com'
 const BACKEND_URL_DEV = 'http://localhost:3012'
@@ -41,6 +44,8 @@ const BACKEND_URL_DEV = 'http://localhost:3012'
   const { data: userData} = useFetchUserQuery(accessToken);
 
   const makePayment = async() => {
+
+    setLoading(true)
     const stripe = await loadStripe("pk_test_51OQl8fSEmo0kwgrlTt96D9sX1ThuIEK2cDyuX9vfRyyEXeJaD4VkYQDvxPco29TZiNeBwf03TVqScnuhIPymQruE00EydpbOby");
     
     const body = {
@@ -51,18 +56,23 @@ const BACKEND_URL_DEV = 'http://localhost:3012'
     const headers = {
         "Content-Type":"application/json"
     }
-    const response = await fetch(`${BACKEND_URL_PRODUCTION}/api/payment/create-checkout-session` , {
+    const response = await fetch(`${BACKEND_URL_DEV}/api/payment/create-checkout-session` , {
         method:'POST',
         headers: headers,
         body :JSON.stringify(body)
     })
 
+    
     const session = await response.json();
 
     const result = await stripe.redirectToCheckout({
         sessionId: session.id
     })
 
+    if(result){
+      setLoading(false)
+    }
+    
     if(result.error){
         console.log(result.error);
     }
@@ -101,6 +111,14 @@ useEffect(() => {
 console.log(orderDetails)
 } , [orderDetails , displayRazorpay])
 
+
+if(loading){
+    return <div className="flex items-center justify-center w-full h-[500px]">
+      <div>
+        <img src={loadingGif} alt="loadinggif" className="w-40 h-40 "/>
+      </div>
+    </div>
+}
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -158,7 +176,7 @@ console.log(orderDetails)
             <MdOutlineCurrencyRupee />
             <p>{total}</p>
             <button onClick={makePayment} className="px-2 py-2 ml-4 text-sm text-white rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500">
-              Continue to Pay
+               Continue to pay
             </button>
           </div>
         </div>
