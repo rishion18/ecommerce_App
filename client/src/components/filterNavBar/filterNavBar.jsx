@@ -18,7 +18,7 @@ const FilterNavBar = ({setNav , navBar}) => {
               <div className="absolute flex flex-col w-full h-full top-20 ">
                     <div className="w-5/6 mx-4">
                         <p className="mb-4 text-xl">Adjust Price Range:</p>
-                        <DoubleRangeSlider/>
+                        <DoubleRangeSlider setNav={setNav}/>
                     </div>
                     <div className="w-full my-12">
                         <Accordion setNav={setNav}/>

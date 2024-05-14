@@ -27,7 +27,7 @@ const Accordion = ({setNav}) => {
 
    const handleSearch = async (subCategory) => {
     try {
-      const products = await fetch(`${BACKEND_URL_PRODUCTION}/api/sortedBy/${subCategory}`)
+      const products = await fetch(`${BACKEND_URL_DEV}/api/sortedBy/${subCategory}`)
       if (products.ok) {
         const res = await products.json();
         if(res){

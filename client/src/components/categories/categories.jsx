@@ -8,7 +8,7 @@ const Categories = ({ navBar }) => {
 
     useEffect(() => {
         if (allCategoriesAndSubcategories && allCategoriesAndSubcategories.length > 0) {
-            setLoading(true); // Set loading to false only if there are actual categories
+            setLoading(true); 
         }
     }, [allCategoriesAndSubcategories]);
 

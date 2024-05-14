@@ -78,3 +78,13 @@ export const getProduct = async(req , res) => {
   }
 
 }
+
+export const getTopDeals = async (req, res) => {
+    console.log('arrived')
+    try {
+        const topDeals = await products.find({ discount: { $gt: 40 } });
+        res.status(200).send(topDeals); 
+    } catch (e) {
+        res.status(500).send({ error: e.message }); 
+    }
+}
